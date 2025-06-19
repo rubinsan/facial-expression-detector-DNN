@@ -43,30 +43,35 @@ class NeuralNet:
         """
         cache = {}
 
-        # for epoch in epoch_n:
-            # forward_prop
+        for epoch in range(epoch_n):
+            pass
+            #self.forward_prop()
             # compute loss
             # backward_prop
             # update parameters
     
-    def forward_prop(self, X, Weigths, biases):
+    def forward_prop(self, X):
         """
         Forward propagation through the network.
 
         Parameters:
-        X -- input features
-        Weigths -- dictionary containing the weights matrices
-        biases -- dictionary containing the biases vectors
+        X -- input sample matrix
 
         Returns:
-        A -- output of the last layer after activation
+        Z_last -- output of the last layer before activation
         cache -- dictionary containing intermediate values for backpropagation
         """
-
-        for layer in range(len(self.dims) - 1):
-            #self.dims[layer+1]
-            pass
-        
+        cache = {}
+        Z = []
+        A = X
+        for i in range(len(self.dims) - 1):
+            W = self.weights["W"+str(i+1)]
+            Z = np.matmul(W, A) + self.biases["b"+str(i+1)]
+            A = relu(Z)
+            cache["Z"+str(i+1)] = Z
+            cache["A"+str(i+1)] = A
+        Z_last = Z  # Last layer output before activation
+        return Z_last, cache
 
     def compute_loss(self, Z_last, Y):
         """

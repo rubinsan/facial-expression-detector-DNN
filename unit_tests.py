@@ -31,12 +31,12 @@ print(A)
 """
 test_NN = NeuralNet([2, 3, 3, 4, 2])
 test_NN.initialization()
-#for layer in test_NN.weights.keys():
- #   print(layer+":")
-  #  print(test_NN.weights[layer])
-#for layer in test_NN.biases.keys():
- #   print(layer+":")
-  #  print(test_NN.biases[layer])
+for layer in test_NN.weights.keys():
+    print(layer+":")
+    print(test_NN.weights[layer])
+for layer in test_NN.biases.keys():
+    print(layer+":")
+    print(test_NN.biases[layer])
 """
 
 # Test compute_loss of NeuralNet class
@@ -51,4 +51,22 @@ Y = Y.T
 print(Y)
 loss = test_NN.compute_loss(Z, Y)
 print("loss output:", loss)
+"""
+
+# Test forward_prop of NeuralNet class
+"""
+test_NN = NeuralNet([4, 3, 3, 4, 8])
+test_NN.initialization()
+batch_size = 4
+X = np.random.rand(test_NN.dims[0], batch_size) * 100
+print("X:")
+print(X)
+Z_last, cache = test_NN.forward_prop(X)
+for i in range(len(test_NN.dims) - 1):
+    print("W"+str(i+1)+":")
+    print(test_NN.weights["W"+str(i+1)])
+    print("Z"+str(i+1)+":")
+    print(cache["Z"+str(i+1)])
+    print("A"+str(i+1)+":")
+    print(cache["A"+str(i+1)])
 """
