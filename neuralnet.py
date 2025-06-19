@@ -9,10 +9,10 @@ class NeuralNet:
     """
     A class to represent a neural network.
     """
-    def __init__(self, *args):
+    def __init__(self, nn_dims):
         """Initialize the neural network with given layer dimensions."""
-        self.dims = args
-        self.weigths = {}
+        self.dims = nn_dims
+        self.weights = {}
         self.biases = {}
 
     def initialization(self):
@@ -21,7 +21,8 @@ class NeuralNet:
         The first layer is the input feature layer.
         """
         for i in range(len(self.dims) - 1):
-            self.weigths["W"+str(i+1)] = np.random.randn(self.dims[i+1], self.dims[i]) * 0.01
+            self.weights["W"+str(i+1)] = np.random.randn(self.dims[i+1], 
+                                                         self.dims[i]) * 0.01
             self.biases["b"+str(i+1)] = np.zeros((self.dims[i+1], 1))
 
         return None
