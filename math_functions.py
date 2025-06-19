@@ -3,8 +3,9 @@ Math functions definition for neural networks.
 """
 import numpy as np
 
-def relu(x):
-    return x * (x > 0)
+def relu(Z):
+    """Compute the ReLU function of matriz Z. """ 
+    return Z * (Z > 0)
 
 def softmax(Z):
     """Compute the softmax of matrix Z. """   
