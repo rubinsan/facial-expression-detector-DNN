@@ -80,6 +80,7 @@ class NeuralNet:
         loss -- computed loss value
         """
         Y_hat = softmax(Z_last)
+        print(Y_hat)
         Y_hat_vector = np.sum((Y*Y_hat), axis=0, keepdims=True)
         loss_vector = -np.log(Y_hat_vector)
         loss = np.sum(loss_vector) / Y.shape[1]
