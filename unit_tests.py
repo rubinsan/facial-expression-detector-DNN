@@ -107,3 +107,16 @@ for i in reversed(range(len(test_NN.dims) - 1)):
     print("db"+str(i+1)+":")
     print(grads["db"+str(i+1)])
 """
+
+# Test training of NeuralNet class
+
+test_NN = NeuralNet([20, 14, 12, 10, 6])
+test_NN.initialization()
+batch_size = 1000
+X = np.random.rand(test_NN.dims[0], batch_size) * 100
+print("X:")
+print(X)
+Y = np.eye(test_NN.dims[-1])[np.random.choice(test_NN.dims[-1], batch_size)]
+Y = Y.T
+test_NN.train(X, Y, epoch_n=1000, learning_rate=0.01)
+
