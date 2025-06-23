@@ -3,7 +3,7 @@ Scrit for testing the neuralnet class methods
 """
 import numpy as np
 from neuralnet import NeuralNet
-from math_functions import softmax, relu
+from math_functions import softmax, relu, relu_derivative
 
 # Test softmax function
 """
@@ -70,3 +70,19 @@ for i in range(len(test_NN.dims) - 1):
     print("A"+str(i+1)+":")
     print(cache["A"+str(i+1)])
 """
+
+# Test of relu_derivative function
+
+test_NN = NeuralNet([4, 3, 3, 4, 5])
+test_NN.initialization()
+batch_size = 4
+X = np.random.rand(test_NN.dims[0], batch_size) * 100
+print("X:")
+print(X)
+Z_last, cache = test_NN.forward_prop(X)
+for i in range(len(test_NN.dims) - 1):
+    print("Z"+str(i+1)+":")
+    print(cache["Z"+str(i+1)])
+    print("dG"+str(i+1)+":")
+    print(relu_derivative(cache["Z"+str(i+1)]))
+

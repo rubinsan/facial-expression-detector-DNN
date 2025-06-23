@@ -41,14 +41,13 @@ class NeuralNet:
         Returns:
 
         """
-        cache = {}
 
         for epoch in range(epoch_n):
-            pass
-            #self.forward_prop()
-            # compute loss
-            # backward_prop
+            Z_last, cache = self.forward_prop(X)
+            loss = self.compute_loss(Z_last, Y)
+            grads = self.backward_prop(cache, Y)
             # update parameters
+            # plot loss vs epoch number
     
     def forward_prop(self, X):
         """
@@ -108,7 +107,9 @@ class NeuralNet:
         #first dZ=Y_hat-Y
         #first dA -> study
 
+        dG = relu_derivative()
         
+
         return gradients
 
 
