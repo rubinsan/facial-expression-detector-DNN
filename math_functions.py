@@ -17,4 +17,3 @@ def relu_derivative(Z):
     """Compute the derivative of the ReLU function respect to the matrix Z."""
     return (Z >= 0).astype(Z.dtype)
 
-    

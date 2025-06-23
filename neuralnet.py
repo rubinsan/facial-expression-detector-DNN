@@ -44,8 +44,8 @@ class NeuralNet:
 
         for epoch in range(epoch_n):
             Z_last, cache = self.forward_prop(X)
-            loss = self.compute_loss(Z_last, Y)
-            grads = self.backward_prop(cache, Y)
+            loss, Y_hat = self.compute_loss(Z_last, Y)
+            grads = self.backward_prop(cache, Y, Y_hat)
             # update parameters
             # plot loss vs epoch number
     
@@ -68,7 +68,8 @@ class NeuralNet:
             Z = np.matmul(W, A) + self.biases["b"+str(i+1)]
             A = relu(Z)
             cache["Z"+str(i+1)] = Z
-            cache["A"+str(i+1)] = A
+            cache["A"+str(i+1)] = A 
+        cache.pop("A"+str(len(self.dims)-1), None) # last layer act is not relu
         Z_last = Z  # Last layer output before activation
         return Z_last, cache
 
@@ -89,9 +90,9 @@ class NeuralNet:
         loss_vector = -np.log(Y_hat_vector)
         loss = np.sum(loss_vector) / Y.shape[1]
 
-        return loss
+        return loss, Y_hat
         
-    def backward_prop(self, cache, Y):
+    def backward_prop(self, cache, Y, Y_hat):
         """
         Backward propagation through the network to compute gradients.
 
@@ -104,10 +105,16 @@ class NeuralNet:
         """
         gradients = {}
         
-        #first dZ=Y_hat-Y
-        #first dA -> study
+        dZ = Y_hat-Y # first dZ
+        dW = (1/Y.shape[1]) * (np.matmul(dZ, 
+                                         cache["A"+str(len(self.dims)-1)].T)) 
+        
 
-        dG = relu_derivative()
+
+        for i in reversed(range(len(self.dims) - 2)):
+            #dG = relu_derivative()
+            pass
+
         
 
         return gradients

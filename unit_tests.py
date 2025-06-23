@@ -67,12 +67,13 @@ for i in range(len(test_NN.dims) - 1):
     print(test_NN.weights["W"+str(i+1)])
     print("Z"+str(i+1)+":")
     print(cache["Z"+str(i+1)])
-    print("A"+str(i+1)+":")
-    print(cache["A"+str(i+1)])
+    if i < len(test_NN.dims) - 2:
+        print("A"+str(i+1)+":")
+        print(cache["A"+str(i+1)])
 """
 
 # Test of relu_derivative function
-
+"""
 test_NN = NeuralNet([4, 3, 3, 4, 5])
 test_NN.initialization()
 batch_size = 4
@@ -85,4 +86,4 @@ for i in range(len(test_NN.dims) - 1):
     print(cache["Z"+str(i+1)])
     print("dG"+str(i+1)+":")
     print(relu_derivative(cache["Z"+str(i+1)]))
-
+"""
