@@ -56,4 +56,3 @@ plt.title("Learning rate =" + str(learning_rate))
 plt.show()
 Y_hat, accuracy = test_NN.predict(X_test, Y_test)
 print("Test accuracy:", accuracy)
-#new comment
