@@ -2,6 +2,10 @@
 Scrit for testing the neuralnet class methods
 """
 import numpy as np
+import os
+import sys
+here = os.path.dirname(__file__)
+sys.path.append(os.path.join(here, '..'))
 from neuralnet_pkg.neuralnet import NeuralNet
 from neuralnet_pkg.math_pkg.math_functions import softmax, relu, relu_derivative
 
@@ -122,7 +126,7 @@ test_NN.train(X, Y, epoch_n=1000, learning_rate=0.01)
 """
 
 # Test predict of NeuralNet class
-
+"""
 test_NN = NeuralNet([20, 14, 12, 10, 6])
 test_NN.initialization()
 batch_size = 1000
@@ -134,4 +138,4 @@ Y = Y.T
 test_NN.train(X, Y, epoch_n=1000, learning_rate=0.01)
 Y_hat, accuracy = test_NN.predict(X, Y)
 print("Test accuracy:", accuracy)
-
+"""
