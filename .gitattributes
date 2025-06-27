@@ -1,2 +1,4 @@
 *.csv filter=lfs diff=lfs merge=lfs -text
+
+# Image files - compressed
 *.jpg filter=lfs diff=lfs merge=lfs -text
