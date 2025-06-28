@@ -6,29 +6,13 @@ import sys
 import numpy as np
 np.set_printoptions(threshold=sys.maxsize)
 import matplotlib.pyplot as plt
-from PIL import Image
-import glob
 from neuralnet_pkg.neuralnet import NeuralNet
+from facial_data_proc_pkg.facial_data_process import jpg_to_csv, load_csv_data
 
 # Dataset import and formatting
-x_list = []
-
-filelist = glob.glob('./facial_emotion_detection_dataset/train/angry/*.jpg')
-for fname in filelist:
-    img_array = np.array(Image.open(fname).convert('L')).flatten() / 255.0 
-    x = img_array.tolist()
-    x_list.append(x)
-
-X = np.array(x_list).T
-print("x shape:", X.shape)
 
 
-img = Image.open('./facial_emotion_detection_dataset/' \
-                                'train/angry/image-34.jpg').convert('L')
-img.show()
-img_array = np.asarray(img).T.flatten()
-img_array = img_array / 255.0  
-print(img_array.shape)
+
 X_train = np.loadtxt("MNIST_data/mnist_train_data.csv", 
                      delimiter=",", ndmin=2).astype(np.int64).T
 Y_train = np.loadtxt("MNIST_data/mnist_train_labels.csv", 
