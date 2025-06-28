@@ -56,6 +56,9 @@ def load_csv_data(type_of_data):
     print(Raw_data[0:5, 0:10])
     print("Raw_data shape:", Raw_data.shape)
     Y_train = Raw_data[0, :]  # The first row is the emotion ID
+
+    # TODO: add one hot encoding for Y_train
+
     print("Y_train shape:", Y_train.shape)
     X_train = np.delete(Raw_data, 0, axis=0)
     print(X_train[0:5, 0:10])
