@@ -48,7 +48,7 @@ class NeuralNet:
             cost, Y_hat = self.compute_cost(Z_last, Y)
             grads = self.backward_prop(cache, Y, Y_hat)
             self.gradient_descent(grads, learning_rate)
-            if epoch % 100 == 0:
+            if epoch % 10 == 0:
                 print("Cost after epoch:", epoch, ":", cost)
                 costs.append(cost)
 

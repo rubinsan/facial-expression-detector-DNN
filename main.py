@@ -13,11 +13,15 @@ from facial_data_proc_pkg.facial_data_process import jpg_to_csv, load_csv_data
 
 
 X_train, Y_train = load_csv_data('train')
-X_train = X_train[:, :5000]
-Y_train = Y_train[:, :5000]
+X_train = X_train[:, :1000]
+Y_train = Y_train[:, :1000]
+print("X_train shape:", X_train.shape)
+print("Y_train shape:", Y_train.shape)
 X_test, Y_test = load_csv_data('test')
-X_test = X_test[:, :500]
-Y_test = Y_test[:, :500]
+X_test = X_test[:, :100]
+Y_test = Y_test[:, :100]
+print("X_test shape:", X_test.shape)
+print("Y_test shape:", Y_test.shape)
 
 """ Nerual Network initialization and training """
 
@@ -25,7 +29,7 @@ Y_test = Y_test[:, :500]
 epoch_n = 1000
 learning_rate = 0.01
 # Initialize the neural network
-test_NN = NeuralNet([X_train.shape[0], 256, 256, Y_train.shape[0]])
+test_NN = NeuralNet([X_train.shape[0], 8192, 8192, Y_train.shape[0]])
 test_NN.initialization()
 costs = test_NN.train(X_train, Y_train, epoch_n, learning_rate)
 # Plotting the training results
