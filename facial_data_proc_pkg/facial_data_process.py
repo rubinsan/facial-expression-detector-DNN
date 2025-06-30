@@ -39,29 +39,38 @@ def load_csv_data(type_of_data):
     Load the CSV files for the specified type of data ('train' or 'test').
     :param type_of_data: 'train' or 'test'
     Returns:
-        X_train -- train data matrix
-        Y_train -- train labels (emotion IDs)
+        X -- data matrix
+        Y -- labels according to emotion IDs
     """
+    if type_of_data not in ['train', 'test']:
+        raise ValueError("type_of_data must be 'train' or 'test'")
+        return None
     
-    Raw_data = np.empty((1, 224*224+1), dtype=np.uint8) # Assuming 224*224 pix + ID
+    Raw_data = np.empty((1, 224*224+1), dtype=np.uint8) # 224*224 pix + ID
     for emotion in emotion_list:
         fname = './' + type_of_data + '_data/' + type_of_data + '_' + emotion + '.csv'
         X_emo = np.loadtxt(fname, delimiter=",", ndmin=2).astype(np.uint8)
         print(X_emo.shape)
         Raw_data = np.concatenate((Raw_data, X_emo), axis=0)
 
+    Raw_data = np.delete(Raw_data, 0, axis=0)  # Remove the first garbage row
     print("Raw_data shape:", Raw_data.shape)
     np.random.shuffle(Raw_data)
     Raw_data = Raw_data.T # Once shuffled, transpose
+    print("Raw_data shape after transpose:", Raw_data.shape)
     print(Raw_data[0:5, 0:10])
-    print("Raw_data shape:", Raw_data.shape)
-    Y_train = Raw_data[0, :]  # The first row is the emotion ID
+    Y = Raw_data[0, :]  # The first row is the emotion ID
+    print("Y max:", Y.max())
+    print("Y shape:", Y.shape)
+    #print(Y) 
 
-    # TODO: add one hot encoding for Y_train
+    Y_onehot = np.zeros((Y.max() + 1, Y.size), dtype=np.int8)
+    print("Y_onehot shape:", Y_onehot.shape)
+    Y_onehot[Y, np.arange(Y.size)] = 1
+    print("Y_onehot shape:", Y_onehot.shape)
+    print(Y_onehot[:, 0:10])
 
-    print("Y_train shape:", Y_train.shape)
-    X_train = np.delete(Raw_data, 0, axis=0)
-    print(X_train[0:5, 0:10])
-    print("X_train shape:", X_train.shape)
-    return X_train, Y_train
-
+    X = np.delete(Raw_data, 0, axis=0)
+    print(X[0:5, 0:10])
+    print("X shape:", X.shape)
+    return X, Y_onehot
