@@ -44,33 +44,31 @@ def load_csv_data(type_of_data):
     """
     if type_of_data not in ['train', 'test']:
         raise ValueError("type_of_data must be 'train' or 'test'")
-        return None
     
+    print(f"Start loading {type_of_data}ing data...")
     Raw_data = np.empty((1, 224*224+1), dtype=np.uint8) # 224*224 pix + ID
     for emotion in emotion_list:
         fname = './' + type_of_data + '_data/' + type_of_data + '_' + emotion + '.csv'
         X_emo = np.loadtxt(fname, delimiter=",", ndmin=2).astype(np.uint8)
-        print(X_emo.shape)
+        #print(X_emo.shape)
         Raw_data = np.concatenate((Raw_data, X_emo), axis=0)
+        print("Loading...")
 
     Raw_data = np.delete(Raw_data, 0, axis=0)  # Remove the first garbage row
-    print("Raw_data shape:", Raw_data.shape)
     np.random.shuffle(Raw_data)
     Raw_data = Raw_data.T # Once shuffled, transpose
-    print("Raw_data shape after transpose:", Raw_data.shape)
-    print(Raw_data[0:5, 0:10])
+    #print("Raw_data shape after transpose:", Raw_data.shape)
+    #print(Raw_data[0:5, 0:10])
     Y = Raw_data[0, :]  # The first row is the emotion ID
-    print("Y max:", Y.max())
-    print("Y shape:", Y.shape)
-    #print(Y) 
+    #print("Y shape:", Y.shape)
 
     Y_onehot = np.zeros((Y.max() + 1, Y.size), dtype=np.int8)
-    print("Y_onehot shape:", Y_onehot.shape)
     Y_onehot[Y, np.arange(Y.size)] = 1
-    print("Y_onehot shape:", Y_onehot.shape)
-    print(Y_onehot[:, 0:10])
+    #print("Y_onehot shape:", Y_onehot.shape)
+    #print(Y_onehot[:, 0:10])
 
     X = np.delete(Raw_data, 0, axis=0)
-    print(X[0:5, 0:10])
-    print("X shape:", X.shape)
+    #print(X[0:5, 0:10])
+    #print("X shape:", X.shape)
+    print(f"{type_of_data} data loaded successfully!")
     return X, Y_onehot
