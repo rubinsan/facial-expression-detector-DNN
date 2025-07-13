@@ -113,7 +113,10 @@ for i in reversed(range(len(test_NN.dims) - 1)):
 """
 
 # Test training of NeuralNet class
-"""
+
+epoch_n=1000
+learning_rate=0.01
+mini_batch_size=32
 test_NN = NeuralNet([20, 14, 12, 10, 6])
 test_NN.initialization()
 batch_size = 1000
@@ -122,11 +125,13 @@ print("X:")
 print(X)
 Y = np.eye(test_NN.dims[-1])[np.random.choice(test_NN.dims[-1], batch_size)]
 Y = Y.T
-test_NN.train(X, Y, epoch_n=1000, learning_rate=0.01)
-"""
+test_NN.train(X, Y, epoch_n, learning_rate, mini_batch_size)
+
 
 # Test predict of NeuralNet class
 """
+epoch_n=1000
+learning_rate=0.01
 test_NN = NeuralNet([20, 14, 12, 10, 6])
 test_NN.initialization()
 batch_size = 1000
@@ -135,7 +140,26 @@ print("X:")
 print(X)
 Y = np.eye(test_NN.dims[-1])[np.random.choice(test_NN.dims[-1], batch_size)]
 Y = Y.T
-test_NN.train(X, Y, epoch_n=1000, learning_rate=0.01)
+test_NN.train(X, Y, epoch_n, learning_rate)
 Y_hat, accuracy = test_NN.predict(X, Y)
 print("Test accuracy:", accuracy)
 """
+
+# Test predict of random_mini_batch method of NeuralNet class
+
+# epoch_n=1000
+# learning_rate=0.01
+# mini_batch_size=32
+
+# test_NN = NeuralNet([20, 14, 12, 10, 6])
+# test_NN.initialization()
+# batch_size = 1000
+# X = np.random.rand(test_NN.dims[0], batch_size) * 100
+# print("X shape:", X.shape)
+# Y = np.eye(test_NN.dims[-1])[np.random.choice(test_NN.dims[-1], batch_size)]
+# Y = Y.T
+# print("Y shape:", Y.shape)
+# _ ,_ = test_NN.random_mini_batch(X, Y, mini_batch_size)
+# test_NN.train(X, Y, epoch_n, learning_rate, mini_batch_size)
+# Y_hat, accuracy = test_NN.predict(X, Y)
+# print("Test accuracy:", accuracy)

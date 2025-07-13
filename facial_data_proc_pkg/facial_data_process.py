@@ -8,6 +8,7 @@ from PIL import Image
 np.set_printoptions(threshold=sys.maxsize)
 import glob
 import csv
+import itertools
 
 # Global variables
 emotion_ID = {'angry': 0, 'fear': 1, 'happy': 2,
@@ -34,7 +35,7 @@ def jpg_to_csv(type_of_data):
             wr.writerows(x_list)
         del x_list 
 
-def load_csv_data(type_of_data):
+def load_csv_data(type_of_data, n_samples=1000):
     """
     Load the CSV files for the specified type of data ('train' or 'test').
     :param type_of_data: 'train' or 'test'
@@ -49,8 +50,11 @@ def load_csv_data(type_of_data):
     Raw_data = np.empty((1, 224*224+1), dtype=np.uint8) # 224*224 pix + ID
     for emotion in emotion_list:
         fname = './' + type_of_data + '_data/' + type_of_data + '_' + emotion + '.csv'
-        X_emo = np.loadtxt(fname, delimiter=",", ndmin=2).astype(np.uint8)
-        #print(X_emo.shape)
+        with open(fname) as f:
+            X_emo = np.genfromtxt(itertools.islice(f,0,n_samples),
+                                  delimiter=',').astype(np.uint8)
+
+        #X_emo = np.loadtxt(fname, delimiter=",", ndmin=2).astype(np.uint8)
         Raw_data = np.concatenate((Raw_data, X_emo), axis=0)
         print("Loading...")
 
@@ -67,7 +71,7 @@ def load_csv_data(type_of_data):
     #print("Y_onehot shape:", Y_onehot.shape)
     #print(Y_onehot[:, 0:10])
 
-    X = np.delete(Raw_data, 0, axis=0)
+    X = np.delete(Raw_data, 0, axis=0) / 255.0 # Normalize pixel values to [0,1]
     #print(X[0:5, 0:10])
     #print("X shape:", X.shape)
     print(f"{type_of_data} data loaded successfully!")

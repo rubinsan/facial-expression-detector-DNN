@@ -27,7 +27,8 @@ class NeuralNet:
 
         return None
 
-    def train (self, X, Y, epoch_n=1000, learning_rate=0.01):
+    def train (self, X, Y, epoch_n=100, learning_rate=0.01, mini_batch_size=32,
+               decay_rate=1):
         """
         Train the neural network using the provided data and labels with the
         specified learning rate.
@@ -41,16 +42,32 @@ class NeuralNet:
         Returns:
         costs -- list of costs at each epoch for performance analysis
         """
+
+        m = X.shape[1]  # number of samples
         costs = []
+        cost = 0.0
 
         for epoch in range(epoch_n):
-            Z_last, cache = self.forward_prop(X)
-            cost, Y_hat = self.compute_cost(Z_last, Y)
-            grads = self.backward_prop(cache, Y, Y_hat)
-            self.gradient_descent(grads, learning_rate)
-            if epoch % 10 == 0:
+            # Generate random mini-batches
+            permutation = list(np.random.permutation(m))
+            shuffled_X = X[:, permutation]
+            shuffled_Y = Y[:, permutation]
+            n_of_batches = m // mini_batch_size  # number of batches
+            #rest_of_samples = m % mini_batch_size  # remaining samples not used
+            for i in range(n_of_batches):
+                start = i * mini_batch_size
+                end = start + mini_batch_size
+                Z_last, cache = self.forward_prop(shuffled_X[:, start:end])
+                batch_cost, Y_hat = self.compute_cost(Z_last, shuffled_Y[:, start:end])
+                #print("Cost for batch:", i, ":", batch_cost)
+                cost += batch_cost
+                grads = self.backward_prop(cache, shuffled_Y[:, start:end], Y_hat)
+                self.gradient_descent(grads, learning_rate, decay_rate, epoch)
+            cost = cost / n_of_batches  # average cost for the epoch
+            if epoch % 1 == 0:
                 print("Cost after epoch:", epoch, ":", cost)
                 costs.append(cost)
+            cost = 0.0
 
         return costs
     
@@ -133,7 +150,7 @@ class NeuralNet:
             
         return gradients
 
-    def gradient_descent(self, gradients, learning_rate):
+    def gradient_descent(self, gradients, learning_rate, decay_rate, epoch_n):
         """
         Update the weights and biases using gradient descent.
 
@@ -141,6 +158,9 @@ class NeuralNet:
         gradients -- dictionary containing gradients for weights and biases
         learning_rate -- learning rate for the update step
         """
+        # Apply learning rate decay
+        learning_rate = learning_rate / (1 + decay_rate * epoch_n)
+        # Update weights and biases
         for i in range(len(self.dims) - 1):
             self.weights["W"+str(i+1)] -= learning_rate * gradients["dW"+str(i+1)]
             self.biases["b"+str(i+1)] -= learning_rate * gradients["db"+str(i+1)]
@@ -162,9 +182,9 @@ class NeuralNet:
         Z_last, _ = self.forward_prop(X)
         _, Y_hat = self.compute_cost(Z_last, Y)
         Y_hat = Y_hat.argmax(axis=0)
+        Y = Y.argmax(axis=0)
         correct_predictions = np.sum(Y_hat == Y)
-        accuracy = (correct_predictions / Y.shape[1]) * 100
+        accuracy = (correct_predictions / Y.shape[0]) * 100
 
         return Y_hat, accuracy
-
 
