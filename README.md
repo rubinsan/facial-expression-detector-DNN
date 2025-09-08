@@ -10,6 +10,9 @@ First I developed a class which represent a DNN as an instantiated object. You c
 To validate the nerural net class I used the MNIST dataset which you can find in this same repo as a .csv files. It contains 60,000 training samples plus 10,000 test samples of manuscript digits (0-9) in 28x28 pixel grayscale image format and a color depth of 8 bits per pixel
 It is very gratefull to see it works like a charm :)
 
+<p align="center">
+  <img src="media/output3.gif">
+</p>
 
 ## facial_emotion_detection_dataset
 Work in progress...
