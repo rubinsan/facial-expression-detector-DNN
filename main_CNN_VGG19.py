@@ -43,49 +43,71 @@ class NeuralNetwork(nn.Module):
     def __init__(self):
         super(NeuralNetwork, self).__init__()
         self.conv1 = nn.Sequential(
-            nn.Conv2d(1, 32, 3, stride=1, padding='same'),
+            nn.Conv2d(1, 64, 3, stride=1, padding='same'),
+            nn.BatchNorm2d(64),
             nn.ReLU(),
-            nn.Conv2d(32, 32, 3, stride=1, padding='same'),
-            nn.ReLU(),
-            nn.Conv2d(32, 32, 3, stride=1, padding='same'),
+            nn.Conv2d(64, 64, 3, stride=1, padding='same'),
+            nn.BatchNorm2d(64),
             nn.ReLU(),
             nn.MaxPool2d(2, 2)
         )
         self.conv2 = nn.Sequential(
-            nn.Conv2d(32, 64, 3, stride=1, padding='same'),
+            nn.Conv2d(64, 128, 3, stride=1, padding='same'),
+            nn.BatchNorm2d(128),
             nn.ReLU(),
-            nn.Conv2d(64, 64, 3, stride=1, padding='same'),
-            nn.ReLU(),
-            nn.Conv2d(64, 64, 3, stride=1, padding='same'),
+            nn.Conv2d(128, 128, 3, stride=1, padding='same'),
+            nn.BatchNorm2d(128),
             nn.ReLU(),
             nn.MaxPool2d(2, 2)
         )
         self.conv3 = nn.Sequential(
-            nn.Conv2d(64, 128, 3, stride=1, padding='same'),
+            nn.Conv2d(128, 256, 3, stride=1, padding='same'),
+            nn.BatchNorm2d(256),
             nn.ReLU(),
-            nn.Conv2d(128, 128, 3, stride=1, padding='same'),
+            nn.Conv2d(256, 256, 3, stride=1, padding='same'),
+            nn.BatchNorm2d(256),
             nn.ReLU(),
-            nn.Conv2d(128, 128, 3, stride=1, padding='same'),
+            nn.Conv2d(256, 256, 3, stride=1, padding='same'),
+            nn.BatchNorm2d(256),
             nn.ReLU(),
-            nn.MaxPool2d(2, 2),
+            nn.Conv2d(256, 256, 3, stride=1, padding='same'),
+            nn.BatchNorm2d(256),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2)
         )   
         self.conv4 = nn.Sequential(
-            nn.Conv2d(128, 256, 3, stride=1, padding='same'),
+            nn.Conv2d(256, 512, 3, stride=1, padding='same'),
+            nn.BatchNorm2d(512),
             nn.ReLU(),
-            nn.Conv2d(256, 256, 3, stride=1, padding='same'),
+            nn.Conv2d(512, 512, 3, stride=1, padding='same'),
+            nn.BatchNorm2d(512),
             nn.ReLU(),
-            nn.Conv2d(256, 256, 3, stride=1, padding='same'),
+            nn.Conv2d(512, 512, 3, stride=1, padding='same'),
+            nn.BatchNorm2d(512),
             nn.ReLU(),
-            nn.MaxPool2d(2, 2),
-            nn.Dropout2d(p=0.2)
+            nn.Conv2d(512, 512, 3, stride=1, padding='same'),
+            nn.BatchNorm2d(512),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2)
+        )  
+        self.conv5 = nn.Sequential(
+            nn.Conv2d(512, 512, 3, stride=1, padding='same'),
+            nn.BatchNorm2d(512),
+            nn.ReLU(),
+            nn.Conv2d(512, 512, 3, stride=1, padding='same'),
+            nn.BatchNorm2d(512),
+            nn.ReLU(),
+            nn.Conv2d(512, 512, 3, stride=1, padding='same'),
+            nn.BatchNorm2d(512),
+            nn.ReLU(),
+            nn.Conv2d(512, 512, 3, stride=1, padding='same'),
+            nn.BatchNorm2d(512),
+            nn.ReLU(),
+            nn.MaxPool2d(3)
         )  
         self.fc = nn.Sequential(    
             nn.Flatten(),
-            nn.Linear(2304, 256),
-            nn.ReLU(),
-            nn.Linear(256, 128),
-            nn.ReLU(),
-            nn.Linear(128, 7)
+            nn.Linear(512, 7)
         )
 
     def forward(self, x):
@@ -93,6 +115,7 @@ class NeuralNetwork(nn.Module):
         x = self.conv2(x)
         x = self.conv3(x)
         x = self.conv4(x)
+        x = self.conv5(x)
         logits = self.fc(x)
         return logits
 
@@ -100,7 +123,8 @@ model = NeuralNetwork().to(device)
 print(model)
 
 loss_fn = nn.CrossEntropyLoss()
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
+optimizer = torch.optim.SGD(model.parameters(), lr=0.002, momentum=0.9, 
+                            weight_decay=9e-4)
 
 def train(dataloader, model, loss_fn, optimizer):
     size = len(dataloader.dataset)
