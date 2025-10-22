@@ -103,12 +103,10 @@ class NeuralNetwork(nn.Module):
             nn.Conv2d(512, 512, 3, stride=1, padding='same'),
             nn.BatchNorm2d(512),
             nn.ReLU(),
-            nn.MaxPool2d(3)
+            nn.MaxPool2d(2, 2),
+            nn.AvgPool2d(kernel_size=1, stride=1),
         )  
-        self.fc = nn.Sequential(    
-            nn.Flatten(),
-            nn.Linear(512, 7)
-        )
+        self.fc = nn.Linear(512, 7)
 
     def forward(self, x):
         x = self.conv1(x)
@@ -116,6 +114,7 @@ class NeuralNetwork(nn.Module):
         x = self.conv3(x)
         x = self.conv4(x)
         x = self.conv5(x)
+        x = x.view(x.size(0), -1)
         logits = self.fc(x)
         return logits
 
@@ -124,7 +123,9 @@ print(model)
 
 loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=0.002, momentum=0.9, 
-                            weight_decay=9e-4)
+                            weight_decay=9e-4, nesterov=True)
+#scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+#            optimizer, mode='max', factor=0.75, patience=5)
 
 def train(dataloader, model, loss_fn, optimizer):
     size = len(dataloader.dataset)
