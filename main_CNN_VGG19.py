@@ -8,19 +8,41 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision.transforms import ToTensor
+from torchvision.transforms import v2
 
-# Download training data from open datasets.
+# Data augmentation pipeline definition
+train_transforms = v2.Compose([
+    v2.Grayscale(),
+    v2.RandomResizedCrop(size=48, scale=(0.8, 1.2)),
+    v2.RandomApply([v2.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5)], p=0.5),
+    v2.RandomApply([v2.RandomAffine(0, translate=(0.2, 0.2))], p=0.5),
+    v2.RandomHorizontalFlip(p=0.5),
+    v2.RandomApply([v2.RandomRotation(10)], p=0.5),
+    #v2.FiveCrop(40),
+    #v2.Lambda(lambda crops: torch.stack([v2.PILToTensor()(crop) for crop in crops])),
+    v2.PILToTensor(),
+    v2.ToDtype(torch.float32, scale=True),
+    v2.Normalize(mean=(0.0,), std=(225.0,))
+])
+
+test_transforms = v2.Compose([
+    v2.PILToTensor(),
+    v2.ToDtype(torch.float32, scale=True),
+    v2.Normalize(mean=(0.0,), std=(225.0,))
+])
+
+# Load training data from disk.
 training_data = datasets.FER2013(
     root="data_FER2013",
     split="train",
-    transform=ToTensor(), 
+    transform=train_transforms, 
 )
 
-# Download test data from open datasets.
+# Load test data from disk.
 test_data = datasets.FER2013(
     root="data_FER2013",
     split="test",
-    transform=ToTensor(), 
+    transform=test_transforms, 
 )
 
 batch_size = 64
@@ -32,7 +54,6 @@ test_dataloader = DataLoader(test_data, batch_size=batch_size)
 for X, y in train_dataloader:
     print(f"Shape of X [N, C, H, W]: {X.shape}")
     print(f"Shape of y: {y.shape} {y.dtype}")
-    print(y[0:5])
     break
 
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
@@ -121,6 +142,8 @@ class NeuralNetwork(nn.Module):
 model = NeuralNetwork().to(device)
 print(model)
 
+# Define loss function, and optimizer
+
 loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9, 
                             weight_decay=1e-4, nesterov=True)
@@ -162,7 +185,9 @@ def test(dataloader, model, loss_fn):
     print(f"Test Error: \n Accuracy: {(100*correct):>0.4f}%, Avg loss: {test_loss:>8f} \n")
     return correct
 
-epochs = 30
+# Training loop
+
+epochs = 50
 for t in range(epochs):
     print(f"Epoch {t+1}\n-------------------------------")
     train(train_dataloader, model, loss_fn, optimizer)
@@ -170,3 +195,7 @@ for t in range(epochs):
     scheduler.step(val_acc)
 print("Done!")
 
+# Save model weights
+
+torch.save(model.state_dict(), "model_VGG19.pth")
+print("Saved PyTorch Model State to model_VGG19.pth")
