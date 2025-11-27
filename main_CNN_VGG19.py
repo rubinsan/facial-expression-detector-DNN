@@ -10,52 +10,6 @@ from torchvision import datasets
 from torchvision.transforms import ToTensor
 from torchvision.transforms import v2
 
-# Data augmentation pipeline definition
-train_transforms = v2.Compose([
-    v2.Grayscale(),
-    v2.RandomResizedCrop(size=48, scale=(0.8, 1.2)),
-    v2.RandomApply([v2.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5)], p=0.5),
-    v2.RandomApply([v2.RandomAffine(0, translate=(0.2, 0.2))], p=0.5),
-    v2.RandomHorizontalFlip(p=0.5),
-    v2.RandomApply([v2.RandomRotation(10)], p=0.5),
-    #v2.FiveCrop(40),
-    #v2.Lambda(lambda crops: torch.stack([v2.PILToTensor()(crop) for crop in crops])),
-    v2.PILToTensor(),
-    v2.ToDtype(torch.float32, scale=True),
-    v2.Normalize(mean=(0.0,), std=(225.0,))
-])
-
-test_transforms = v2.Compose([
-    v2.PILToTensor(),
-    v2.ToDtype(torch.float32, scale=True),
-    v2.Normalize(mean=(0.0,), std=(225.0,))
-])
-
-# Load training data from disk.
-training_data = datasets.FER2013(
-    root="data_FER2013",
-    split="train",
-    transform=train_transforms, 
-)
-
-# Load test data from disk.
-test_data = datasets.FER2013(
-    root="data_FER2013",
-    split="test",
-    transform=test_transforms, 
-)
-
-batch_size = 64
-
-# Create data loaders.
-train_dataloader = DataLoader(training_data, batch_size=batch_size)
-test_dataloader = DataLoader(test_data, batch_size=batch_size)
-
-for X, y in train_dataloader:
-    print(f"Shape of X [N, C, H, W]: {X.shape}")
-    print(f"Shape of y: {y.shape} {y.dtype}")
-    break
-
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using {device} device")
 
@@ -141,6 +95,52 @@ class NeuralNetwork(nn.Module):
 
 if __name__ == "__main__":
 
+    # Data augmentation pipeline definition
+    train_transforms = v2.Compose([
+        v2.Grayscale(),
+        v2.RandomResizedCrop(size=48, scale=(0.8, 1.2)),
+        v2.RandomApply([v2.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5)], p=0.5),
+        v2.RandomApply([v2.RandomAffine(0, translate=(0.2, 0.2))], p=0.5),
+        v2.RandomHorizontalFlip(p=0.5),
+        v2.RandomApply([v2.RandomRotation(10)], p=0.5),
+        #v2.FiveCrop(40),
+        #v2.Lambda(lambda crops: torch.stack([v2.PILToTensor()(crop) for crop in crops])),
+        v2.PILToTensor(),
+        v2.ToDtype(torch.float32, scale=True),
+        v2.Normalize(mean=(0.0,), std=(225.0,))
+    ])
+
+    test_transforms = v2.Compose([
+        v2.PILToTensor(),
+        v2.ToDtype(torch.float32, scale=True),
+        v2.Normalize(mean=(0.0,), std=(225.0,))
+    ])
+
+    # Load training data from disk.
+    training_data = datasets.FER2013(
+        root="data_FER2013",
+        split="train",
+        transform=train_transforms, 
+    )
+
+    # Load test data from disk.
+    test_data = datasets.FER2013(
+        root="data_FER2013",
+        split="test",
+        transform=test_transforms, 
+    )
+
+    batch_size = 64
+
+    # Create data loaders.
+    train_dataloader = DataLoader(training_data, batch_size=batch_size)
+    test_dataloader = DataLoader(test_data, batch_size=batch_size)
+
+    for X, y in train_dataloader:
+        print(f"Shape of X [N, C, H, W]: {X.shape}")
+        print(f"Shape of y: {y.shape} {y.dtype}")
+        break
+
     model = NeuralNetwork().to(device)
     print(model)
 
@@ -180,6 +180,7 @@ if __name__ == "__main__":
             for X, y in dataloader:
                 X, y = X.to(device), y.to(device)
                 pred = model(X)
+                print(pred)
                 test_loss += loss_fn(pred, y).item()
                 correct += (pred.argmax(1) == y).type(torch.float).sum().item()
         test_loss /= num_batches
