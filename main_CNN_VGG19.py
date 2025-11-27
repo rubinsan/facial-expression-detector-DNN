@@ -139,63 +139,65 @@ class NeuralNetwork(nn.Module):
         logits = self.fc(x)
         return logits
 
-model = NeuralNetwork().to(device)
-print(model)
+if __name__ == "__main__":
 
-# Define loss function, and optimizer
+    model = NeuralNetwork().to(device)
+    print(model)
 
-loss_fn = nn.CrossEntropyLoss()
-optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9, 
-                            weight_decay=1e-4, nesterov=True)
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            optimizer, mode='max', factor=0.75, patience=5)
+    # Define loss function, and optimizer
 
-def train(dataloader, model, loss_fn, optimizer):
-    size = len(dataloader.dataset)
-    model.train()
-    for batch, (X, y) in enumerate(dataloader):
-        X, y = X.to(device), y.to(device)
+    loss_fn = nn.CrossEntropyLoss()
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9, 
+                                weight_decay=1e-4, nesterov=True)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+                optimizer, mode='max', factor=0.75, patience=5)
 
-        # Compute prediction error
-        pred = model(X)
-        loss = loss_fn(pred, y)
-
-        # Backpropagation
-        loss.backward()
-        optimizer.step()
-        optimizer.zero_grad()
-
-        if batch % 100 == 0:
-            loss, current = loss.item(), (batch + 1) * len(X)
-            print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
-
-def test(dataloader, model, loss_fn):
-    size = len(dataloader.dataset)
-    num_batches = len(dataloader)
-    model.eval()
-    test_loss, correct = 0, 0
-    with torch.no_grad():
-        for X, y in dataloader:
+    def train(dataloader, model, loss_fn, optimizer):
+        size = len(dataloader.dataset)
+        model.train()
+        for batch, (X, y) in enumerate(dataloader):
             X, y = X.to(device), y.to(device)
+
+            # Compute prediction error
             pred = model(X)
-            test_loss += loss_fn(pred, y).item()
-            correct += (pred.argmax(1) == y).type(torch.float).sum().item()
-    test_loss /= num_batches
-    correct /= size
-    print(f"Test Error: \n Accuracy: {(100*correct):>0.4f}%, Avg loss: {test_loss:>8f} \n")
-    return correct
+            loss = loss_fn(pred, y)
 
-# Training loop
+            # Backpropagation
+            loss.backward()
+            optimizer.step()
+            optimizer.zero_grad()
 
-epochs = 51
-for t in range(epochs):
-    print(f"Epoch {t+1}\n-------------------------------")
-    train(train_dataloader, model, loss_fn, optimizer)
-    val_acc = test(test_dataloader, model, loss_fn)
-    scheduler.step(val_acc)
-print("Done!")
+            if batch % 100 == 0:
+                loss, current = loss.item(), (batch + 1) * len(X)
+                print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
 
-# Save model weights
+    def test(dataloader, model, loss_fn):
+        size = len(dataloader.dataset)
+        num_batches = len(dataloader)
+        model.eval()
+        test_loss, correct = 0, 0
+        with torch.no_grad():
+            for X, y in dataloader:
+                X, y = X.to(device), y.to(device)
+                pred = model(X)
+                test_loss += loss_fn(pred, y).item()
+                correct += (pred.argmax(1) == y).type(torch.float).sum().item()
+        test_loss /= num_batches
+        correct /= size
+        print(f"Test Error: \n Accuracy: {(100*correct):>0.4f}%, Avg loss: {test_loss:>8f} \n")
+        return correct
 
-torch.save(model.state_dict(), "model_VGG19.pth")
-print("Saved PyTorch Model State to model_VGG19.pth")
+    # Training loop
+
+    epochs = 51
+    for t in range(epochs):
+        print(f"Epoch {t+1}\n-------------------------------")
+        train(train_dataloader, model, loss_fn, optimizer)
+        val_acc = test(test_dataloader, model, loss_fn)
+        scheduler.step(val_acc)
+    print("Done!")
+
+    # Save model weights
+
+    torch.save(model.state_dict(), "model_VGG19.pth")
+    print("Saved PyTorch Model State to model_VGG19.pth")
