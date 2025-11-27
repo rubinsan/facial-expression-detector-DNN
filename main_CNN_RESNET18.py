@@ -21,14 +21,14 @@ train_transforms = v2.Compose([
     #v2.FiveCrop(40),
     #v2.Lambda(lambda crops: torch.stack([v2.PILToTensor()(crop) for crop in crops])),
     v2.PILToTensor(),
-    v2.ToDtype(torch.float32, scale=True),
-    v2.Normalize(mean=(0.0,), std=(225.0,))
+    v2.ToDtype(torch.float32),
+    v2.Normalize(mean=(0.0,), std=(255.0,))
 ])
 
 test_transforms = v2.Compose([
     v2.PILToTensor(),
-    v2.ToDtype(torch.float32, scale=True),
-    v2.Normalize(mean=(0.0,), std=(225.0,))
+    v2.ToDtype(torch.float32),
+    v2.Normalize(mean=(0.0,), std=(255.0,))
 ])
 
 # Load training data from disk.

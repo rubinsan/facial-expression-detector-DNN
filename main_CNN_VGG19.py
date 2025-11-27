@@ -106,14 +106,14 @@ if __name__ == "__main__":
         #v2.FiveCrop(40),
         #v2.Lambda(lambda crops: torch.stack([v2.PILToTensor()(crop) for crop in crops])),
         v2.PILToTensor(),
-        v2.ToDtype(torch.float32, scale=True),
-        v2.Normalize(mean=(0.0,), std=(225.0,))
+        v2.ToDtype(torch.float32),
+        v2.Normalize(mean=(0.0,), std=(255.0,))
     ])
 
     test_transforms = v2.Compose([
         v2.PILToTensor(),
-        v2.ToDtype(torch.float32, scale=True),
-        v2.Normalize(mean=(0.0,), std=(225.0,))
+        v2.ToDtype(torch.float32),
+        v2.Normalize(mean=(0.0,), std=(255.0,))
     ])
 
     # Load training data from disk.
@@ -180,7 +180,6 @@ if __name__ == "__main__":
             for X, y in dataloader:
                 X, y = X.to(device), y.to(device)
                 pred = model(X)
-                print(pred)
                 test_loss += loss_fn(pred, y).item()
                 correct += (pred.argmax(1) == y).type(torch.float).sum().item()
         test_loss /= num_batches
@@ -190,7 +189,7 @@ if __name__ == "__main__":
 
     # Training loop
 
-    epochs = 51
+    epochs = 50
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
         train(train_dataloader, model, loss_fn, optimizer)

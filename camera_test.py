@@ -23,6 +23,23 @@ pipeline.start(config)
 
 face_model_input_size = (48,48)
 
+def emo_class(emo_ID):
+    match emo_ID:
+        case 0:
+            return "angry"
+        case 1:
+            return "disgust"
+        case 2:
+            return "fear"
+        case 3:
+            return "happy"
+        case 4:
+            return "neutral"
+        case 5:
+            return "sad"
+        case 6:
+            return "surprise"
+
 try:
     while True:
 
@@ -52,13 +69,14 @@ try:
                 X = torch.from_numpy(input_data).to(device)
                 pred = model(X.unsqueeze(0))
                 emotion = pred.argmax(1)
-                print(pred)
-                print(emotion)
+                emotion = emo_class(emotion.item())
+            image = cv2.putText(color_image, emotion, (x1, y1-10), 
+                                cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
-        cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
-        cv2.namedWindow('Copped face', cv2.WINDOW_AUTOSIZE)
-        cv2.imshow('RealSense', color_image)
-        cv2.imshow('Copped face', resized_gray)
+        cv2.namedWindow('Emotion Detector', cv2.WINDOW_AUTOSIZE)
+        #cv2.namedWindow('Copped face', cv2.WINDOW_AUTOSIZE)
+        cv2.imshow('Emotion Detector', color_image)
+        #cv2.imshow('Copped face', resized_gray)
         cv2.waitKey(1)
 
 finally:
