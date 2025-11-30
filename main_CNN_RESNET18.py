@@ -127,8 +127,8 @@ print(model)
 loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9, 
                             weight_decay=1e-4, nesterov=True)
-#scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-#           optimizer, mode='max', factor=0.75, patience=5)
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+           optimizer, mode='max', factor=0.75, patience=5)
 
 def train(dataloader, model, loss_fn, optimizer):
     size = len(dataloader.dataset)
@@ -171,7 +171,7 @@ for t in range(epochs):
     print(f"Epoch {t+1}\n-------------------------------")
     train(train_dataloader, model, loss_fn, optimizer)
     val_acc = test(test_dataloader, model, loss_fn)
-    #scheduler.step(val_acc)
+    scheduler.step(val_acc)
 print("Done!")
 
 # Save model weights
