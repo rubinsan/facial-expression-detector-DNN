@@ -125,7 +125,7 @@ print(model)
 
 # Define loss function, and optimizer
 loss_fn = nn.CrossEntropyLoss()
-optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9, 
+optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9, 
                             weight_decay=1e-4, nesterov=True)
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
            optimizer, mode='max', factor=0.75, patience=5)
