@@ -3,14 +3,26 @@ from mtcnn import MTCNN
 import pyrealsense2 as rs
 import numpy as np
 import cv2
-from main_CNN_VGG19 import NeuralNetwork, device
+from CNN_models import VGG, RESNET
+
+device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
+print(f"Using {device} device")
 
 # Initialize MTCNN detector
 mtcnn = MTCNN(device="GPU:0")
 
 # Create facial expression detector model and load weights
-model = NeuralNetwork().to(device)
-model.load_state_dict(torch.load('model_VGG19.pth', weights_only=True))
+# Choose option VGG or ResNet architecture
+option = "VGG"
+#option = "ResNet"
+
+if option == "VGG": 
+    model = VGG.VGG19().to(device)
+    model.load_state_dict(torch.load('CNN_models/Weights/model_VGG19.pth', weights_only=True))
+elif option == "ResNet": 
+    model = RESNET.ResNet(RESNET.BasicBlock, [2, 2, 2, 2]).to(device)
+    model.load_state_dict(torch.load('CNN_models/Weights/model_RESNET18.pth', weights_only=True))
+
 model.eval()
 
 # Configure depth and color streams
