@@ -1,5 +1,4 @@
-# Pytorch implementation for facial expression recognition on 
-# FER2013 dataset using CNN
+# Pytorch implementation for RESNET CNN model
 # Author Ruben Sanchez - github/rubinsan
 
 from torch import nn

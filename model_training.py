@@ -1,4 +1,4 @@
-# Pytorch implementation for facial expression recognition on 
+# Loading data and model trainig for facial expression detectors
 # FER2013 dataset using CNN
 # Author Ruben Sanchez - github/rubinsan
 
