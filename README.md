@@ -17,6 +17,15 @@ It is very gratefull to see it works like a charm :)
 ## FER2013 dataset
 Work in progress...
 
+## Dependencies
+MTCNN version
+Pytorch
+Tensorflow
+Numpy
+Python
+
+HW - NVIDIA Jetson nano Jetpack version and drivers
+Camera
 
 ## Author
 
