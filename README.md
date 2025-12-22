@@ -14,7 +14,7 @@ It is very gratefull to see it works like a charm :)
   <img src="media/output3.gif">
 </p>
 
-## facial_emotion_detection_dataset
+## FER2013 dataset
 Work in progress...
 
 
